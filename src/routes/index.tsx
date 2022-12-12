@@ -1,8 +1,6 @@
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 
-import QuizPage from '@/pages/Quiz';
-import StartPage from '@/pages/Start';
-
+import { QuizPage, StartPage, NotFoundPage } from '../pages';
 export default function Routes() {
   const router = createBrowserRouter([
     {
@@ -12,6 +10,10 @@ export default function Routes() {
     {
       path: '/quiz',
       element: <QuizPage />,
+    },
+    {
+      path: '*',
+      element: <NotFoundPage />,
     },
   ]);
 

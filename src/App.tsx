@@ -1,18 +1,14 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Routes from '@/routes';
+import { QuizProvider } from './store/context';
 
-import StartPage from './pages/Start';
-import QuizPage from './pages/Quiz';
 import Container from '@/components/layout/Container';
 
 function App() {
   return (
     <Container>
-      <Router>
-        <Routes>
-          <Route path="/" element={<StartPage />} />
-          <Route path="/quiz" element={<QuizPage />} />
-        </Routes>
-      </Router>
+      <QuizProvider>
+        <Routes />
+      </QuizProvider>
     </Container>
   );
 }
