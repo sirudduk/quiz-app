@@ -8,6 +8,7 @@ interface ButtonProps {
   title: string;
   size: BUTTON_SIZE;
   onClick: () => void;
+  disabled: boolean;
 }
 
 export default function Button(props: ButtonProps) {
@@ -21,7 +22,11 @@ export default function Button(props: ButtonProps) {
     'border-2 text-gray-600 font-bold border-orange-300 rounded-md';
 
   return (
-    <button className={`${defaultBtnStyles} ${size}`} onClick={props.onClick}>
+    <button
+      className={`${defaultBtnStyles} ${size}`}
+      onClick={props.onClick}
+      disabled={props.disabled}
+    >
       {props.title}
     </button>
   );
