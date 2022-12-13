@@ -7,6 +7,6 @@ export interface QuizInterface {
   incorrect_answers: string[];
   question: string;
   type: string;
-
+  selected?: number;
   list: [];
 }

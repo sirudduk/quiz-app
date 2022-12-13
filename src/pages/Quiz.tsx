@@ -1,32 +1,31 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { useNavigate, Navigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
 import Spinner from '@/components/ui/Spinner';
 import Button, { BUTTON_SIZE } from '@/components/ui/Button';
+import useQuiz from '@/hooks/useQuiz';
 import useInterval from '@/hooks/useInterval';
 import { getQuiz } from '@/services/quiz';
-import { QuizContext } from '@/store/context';
+import {
+  QUIZ_COUNT,
+  INCORRECT_NOTE_KEY,
+  DEFAULT_FEEDBACK_MESSAGE,
+  EFFECT_COLOR,
+} from '@/constants';
+
 import { ActionTypes } from '@/store/types';
 
-const QUIZ_COUNT = 5;
-
-const DEFAULT_FEEDBACK_MESSAGE = '🚀 정답을 선택해주세요!';
-const EFFECT_COLOR = {
-  CORRECT: 'bg-green-50',
-  INCORRECT: 'bg-red-50',
-  DEFAULT: 'bg-gray-50',
-};
-
 export default function QuizPage() {
-  const navigate = useNavigate();
-  const { state, dispatch } = useContext(QuizContext);
-  const { currentQuizNumber, quiz } = state;
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [feedback, setFeedback] = useState<string>(DEFAULT_FEEDBACK_MESSAGE);
   const [isShowNextQuiz, setIsShowNextQuiz] = useState<boolean>(false);
-  const [isQuizEnd, setIsQuizEnd] = useState<boolean>(false);
+  const [isShowQuizEnd, setIsShowQuizEnd] = useState<boolean>(false);
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [effectColor, setEffectColor] = useState<string>(EFFECT_COLOR.DEFAULT);
   const [time, setTime] = useState<number>(0);
+
+  const { renderHTML, state, dispatch, navigate } = useQuiz();
+
+  const { currentQuizNumber, quiz } = state;
 
   async function fetchQuiz() {
     setIsLoading(true);
@@ -44,14 +43,8 @@ export default function QuizPage() {
       });
   }
 
-  const renderHTML = (text: string, style: string) =>
-    React.createElement('span', {
-      dangerouslySetInnerHTML: { __html: text },
-      className: style,
-    });
-
   function handleClickAnswer(idx: number) {
-    if (isShowNextQuiz || isQuizEnd) return;
+    if (isShowNextQuiz || isShowQuizEnd) return;
 
     if (
       quiz[currentQuizNumber].list[idx] ===
@@ -64,12 +57,13 @@ export default function QuizPage() {
       setFeedback(`😆 딩동댕! ${idx + 1}번은 정답입니다`);
       setEffectColor(EFFECT_COLOR.CORRECT);
     } else {
+      setSelectedAnswer(idx + 1);
       setFeedback(`😵 땡! ${idx + 1}번은 오답입니다.`);
       setEffectColor(EFFECT_COLOR.INCORRECT);
     }
 
     if (currentQuizNumber + 1 === QUIZ_COUNT) {
-      setIsQuizEnd(true);
+      setIsShowQuizEnd(true);
       dispatch({
         type: ActionTypes.SET_TIME,
         payload: time,
@@ -80,6 +74,7 @@ export default function QuizPage() {
   }
 
   function handleClickNextQuiz() {
+    setSelectedAnswer(null);
     setIsShowNextQuiz(false);
     setFeedback(DEFAULT_FEEDBACK_MESSAGE);
     setEffectColor(EFFECT_COLOR.DEFAULT);
@@ -89,11 +84,27 @@ export default function QuizPage() {
     });
   }
 
+  function handleClickWriteIncorrectNote() {
+    const prevNoteData = localStorage.getItem(INCORRECT_NOTE_KEY) || '[]';
+
+    const noteData = [
+      ...JSON.parse(prevNoteData),
+      {
+        ...quiz[currentQuizNumber],
+        selected: selectedAnswer,
+      },
+    ];
+
+    localStorage.setItem(INCORRECT_NOTE_KEY, JSON.stringify(noteData));
+    alert('오답노트에 저장되었습니다.');
+    setSelectedAnswer(null);
+  }
+
   useInterval(
     () => {
       setTime(time + 1);
     },
-    isQuizEnd ? null : 1000,
+    isShowQuizEnd ? null : 1000,
   );
 
   useEffect(() => {
@@ -120,37 +131,49 @@ export default function QuizPage() {
           <span
             key={idx}
             className={`${
-              isShowNextQuiz || isQuizEnd
+              isShowNextQuiz || isShowQuizEnd
                 ? 'cursor-not-allowed'
                 : 'cursor-pointer hover:font-bold '
-            } inline-flex font-bold text-gray-500`}
+            } inline-flex text-gray-500`}
             onClick={() => handleClickAnswer(idx)}
           >
             {`${idx + 1}.`}
-            {renderHTML(item, 'ml-2 font-normal text-gray-800')}
+            {renderHTML(item, 'ml-2 text-gray-800')}
           </span>
         ))}
         <p className="text-[20px] font-bold my-5">{feedback}</p>
 
-        {isShowNextQuiz && (
-          <div className="flex">
-            <Button
-              title="다음 문제"
-              size={BUTTON_SIZE.SMALL}
-              onClick={handleClickNextQuiz}
-            />
-          </div>
-        )}
+        <div className="flex gap-3">
+          {isShowNextQuiz && (
+            <div className="flex">
+              <Button
+                title="다음 문제"
+                size={BUTTON_SIZE.SMALL}
+                onClick={handleClickNextQuiz}
+              />
+            </div>
+          )}
 
-        {isQuizEnd && (
-          <div className="flex">
-            <Button
-              title="결과 보기"
-              size={BUTTON_SIZE.SMALL}
-              onClick={() => navigate('/result')}
-            />
-          </div>
-        )}
+          {isShowQuizEnd && (
+            <div className="flex">
+              <Button
+                title="결과 보기"
+                size={BUTTON_SIZE.SMALL}
+                onClick={() => navigate('/result')}
+              />
+            </div>
+          )}
+
+          {selectedAnswer && (
+            <div className="flex">
+              <Button
+                title="📝 오답 노트 저장"
+                size={BUTTON_SIZE.SMALL}
+                onClick={handleClickWriteIncorrectNote}
+              />
+            </div>
+          )}
+        </div>
       </div>
     </div>
   ) : (

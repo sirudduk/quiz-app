@@ -18,13 +18,22 @@ export default function ResultPage() {
         <span>😆 딩동댕! 정답 개수: {correctCount}개</span>
         <span>😵 땡! 오답 개수: {quiz.length - correctCount}개</span>
         <span className="mb-8">⏰ 소요 시간: {time}초</span>
-        <Button
-          title="처음으로"
-          size={BUTTON_SIZE.SMALL}
-          onClick={() => {
-            navigate('/');
-          }}
-        />
+        <div className="flex gap-3">
+          <Button
+            title="🏠 처음으로"
+            size={BUTTON_SIZE.SMALL}
+            onClick={() => {
+              navigate('/');
+            }}
+          />
+          <Button
+            title="📝 오답노트"
+            size={BUTTON_SIZE.SMALL}
+            onClick={() => {
+              navigate('/');
+            }}
+          />
+        </div>
       </div>
     </div>
   ) : (

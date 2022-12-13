@@ -20,11 +20,16 @@ export default function StartPage() {
   }, []);
 
   return (
-    <div>
+    <div className="flex gap-3 py-5">
       <Button
-        title="&#128640; 퀴즈 풀기"
+        title="🚀 퀴즈 풀기"
         size={BUTTON_SIZE.LARGE}
         onClick={handleClick}
+      />
+      <Button
+        title="📝 오답노트"
+        size={BUTTON_SIZE.LARGE}
+        onClick={() => navigate('/incorrect-note')}
       />
     </div>
   );
