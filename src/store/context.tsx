@@ -5,8 +5,11 @@ import { ActionTypes } from './types';
 
 import reducer from './reducer';
 
-const initialState = {
+export const initialState = {
   quiz: [],
+  currentQuizNumber: 0,
+  time: 0,
+  correctCount: 0,
 };
 
 const QuizContext = createContext<{
