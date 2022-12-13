@@ -9,7 +9,7 @@ export default function IncorrectNotePage() {
   const note = JSON.parse(localStorage.getItem(INCORRECT_NOTE_KEY) || '[]');
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 w-[500px]">
       <div className="flex items-center justify-between">
         <span className="font-bold text-2xl">📝 오답노트</span>
         <Button
@@ -20,25 +20,31 @@ export default function IncorrectNotePage() {
           }}
         />
       </div>
-      <div className="h-[70vh] overflow-y-auto flex flex-col gap-4 p-6">
-        {note.map((item: QuizInterface, idx: number) => (
-          <div key={idx} className="bg-gray-50 rounded-lg p-4 shadow-md">
-            {renderHTML(item.question, 'font-bold mb-4 inline-block')}
+      {note.length ? (
+        <div className="h-[70vh] overflow-y-auto flex flex-col gap-4 p-6">
+          {note.map((item: QuizInterface, idx: number) => (
+            <div key={idx} className="bg-gray-50 rounded-lg p-4 shadow-md">
+              {renderHTML(item.question, 'font-bold mb-4 inline-block')}
 
-            {item.list.map((li: string, index: number) => (
-              <p
-                key={index}
-                className={`${
-                  Number(item.selected) === index + 1 ? 'text-red-500' : ''
-                } ${item.correct_answer === li ? 'text-blue-500' : ''}`}
-              >
-                {`${index + 1}.`}
-                {renderHTML(li, 'ml-1 inline-block')}
-              </p>
-            ))}
-          </div>
-        ))}
-      </div>
+              {item.list.map((li: string, index: number) => (
+                <p
+                  key={index}
+                  className={`${
+                    Number(item.selected) === index + 1 ? 'text-red-500' : ''
+                  } ${item.correct_answer === li ? 'text-blue-500' : ''}`}
+                >
+                  {`${index + 1}.`}
+                  {renderHTML(li, 'ml-1 inline-block')}
+                </p>
+              ))}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="text-center text-2xl mt-10">
+          저장된 오답노트가 없습니다.
+        </div>
+      )}
     </div>
   );
 }

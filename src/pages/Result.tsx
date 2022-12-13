@@ -30,7 +30,7 @@ export default function ResultPage() {
             title="📝 오답노트"
             size={BUTTON_SIZE.SMALL}
             onClick={() => {
-              navigate('/');
+              navigate('/incorrect-note');
             }}
           />
         </div>
