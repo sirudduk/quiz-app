@@ -1,14 +1,11 @@
-import { useContext, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 import Button, { BUTTON_SIZE } from '@/components/ui/Button';
-import { QuizContext } from '@/store/context';
 import { ActionTypes } from '@/store/types';
+import useCommon from '@/hooks/useCommon';
 
 export default function StartPage() {
-  const navigate = useNavigate();
-  const { dispatch } = useContext(QuizContext);
-
+  const { dispatch, navigate } = useCommon();
   function handleClick() {
     navigate('/quiz');
   }

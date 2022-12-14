@@ -1,10 +1,10 @@
-import useQuiz from '@/hooks/useQuiz';
+import useCommon from '@/hooks/useCommon';
 import { QuizInterface } from '@/interface/quiz';
 import Button, { BUTTON_SIZE } from '@/components/ui/Button';
 import { INCORRECT_NOTE_KEY } from '@/constants';
 
 export default function IncorrectNotePage() {
-  const { renderHTML, navigate } = useQuiz();
+  const { renderHTML, navigate } = useCommon();
 
   const note = JSON.parse(localStorage.getItem(INCORRECT_NOTE_KEY) || '[]');
 

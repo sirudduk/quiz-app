@@ -1,15 +1,15 @@
-import React, { useContext } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import React from 'react';
+import { Navigate } from 'react-router-dom';
+
+import useCommon from '@/hooks/useCommon';
 
 import Button, { BUTTON_SIZE } from '@/components/ui/Button';
 import PieChart from '@/components/ui/PieChart';
 
-import { QuizContext } from '@/store/context';
-
 export default function ResultPage() {
-  const navigate = useNavigate();
-  const { state } = useContext(QuizContext);
+  const { state, navigate } = useCommon();
   const { quiz, time, correctCount } = state;
+
   return quiz.length ? (
     <div className="flex gap-8 items-center mb-7">
       <PieChart percent={correctCount * 10} />
